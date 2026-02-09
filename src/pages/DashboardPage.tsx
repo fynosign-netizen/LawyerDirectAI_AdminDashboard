@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   Users,
   Scale,
@@ -7,71 +8,51 @@ import {
   Star,
   UserCheck,
   Activity,
+  Loader2,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { dashboardStats, recentActivity } from "@/lib/mock-data";
-
-const statCards = [
-  {
-    title: "Total Users",
-    value: dashboardStats.totalUsers.toLocaleString(),
-    icon: Users,
-    description: "All registered users",
-    color: "text-blue-600 bg-blue-50",
-  },
-  {
-    title: "Active Lawyers",
-    value: dashboardStats.totalLawyers.toLocaleString(),
-    icon: Scale,
-    description: "Verified attorneys",
-    color: "text-indigo-600 bg-indigo-50",
-  },
-  {
-    title: "Total Clients",
-    value: dashboardStats.totalClients.toLocaleString(),
-    icon: UserCheck,
-    description: "Registered clients",
-    color: "text-violet-600 bg-violet-50",
-  },
-  {
-    title: "Total Revenue",
-    value: `$${dashboardStats.totalRevenue.toLocaleString()}`,
-    icon: DollarSign,
-    description: "Lifetime earnings",
-    color: "text-emerald-600 bg-emerald-50",
-  },
-  {
-    title: "Active Consultations",
-    value: dashboardStats.activeConsultations.toString(),
-    icon: MessageSquare,
-    description: "Currently in progress",
-    color: "text-amber-600 bg-amber-50",
-  },
-  {
-    title: "Today's Sessions",
-    value: dashboardStats.consultationsToday.toString(),
-    icon: Clock,
-    description: "Consultations today",
-    color: "text-cyan-600 bg-cyan-50",
-  },
-  {
-    title: "Pending Approvals",
-    value: dashboardStats.pendingApprovals.toString(),
-    icon: Activity,
-    description: "Lawyers awaiting review",
-    color: "text-orange-600 bg-orange-50",
-  },
-  {
-    title: "Average Rating",
-    value: dashboardStats.avgRating.toString(),
-    icon: Star,
-    description: "Platform-wide rating",
-    color: "text-yellow-600 bg-yellow-50",
-  },
-];
+import { api, type DashboardStats } from "@/lib/api";
 
 export default function DashboardPage() {
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    api
+      .get<{ data: DashboardStats }>("/admin/stats")
+      .then((res) => setStats(res.data))
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  if (!stats) {
+    return (
+      <div className="flex h-64 items-center justify-center text-muted-foreground">
+        Failed to load dashboard data
+      </div>
+    );
+  }
+
+  const statCards = [
+    { title: "Total Users", value: stats.totalUsers.toLocaleString(), icon: Users, description: "All registered users", color: "text-blue-600 bg-blue-50" },
+    { title: "Active Lawyers", value: stats.totalLawyers.toLocaleString(), icon: Scale, description: "Verified attorneys", color: "text-indigo-600 bg-indigo-50" },
+    { title: "Total Clients", value: stats.totalClients.toLocaleString(), icon: UserCheck, description: "Registered clients", color: "text-violet-600 bg-violet-50" },
+    { title: "Total Revenue", value: `$${stats.totalRevenue.toLocaleString()}`, icon: DollarSign, description: "Lifetime earnings", color: "text-emerald-600 bg-emerald-50" },
+    { title: "Active Consultations", value: stats.activeConsultations.toString(), icon: MessageSquare, description: "Currently in progress", color: "text-amber-600 bg-amber-50" },
+    { title: "Today's Sessions", value: stats.consultationsToday.toString(), icon: Clock, description: "Consultations today", color: "text-cyan-600 bg-cyan-50" },
+    { title: "Pending Approvals", value: stats.pendingApprovals.toString(), icon: Activity, description: "Lawyers awaiting review", color: "text-orange-600 bg-orange-50" },
+    { title: "Average Rating", value: stats.avgRating.toString(), icon: Star, description: "Platform-wide rating", color: "text-yellow-600 bg-yellow-50" },
+  ];
+
   return (
     <div className="space-y-6">
       <div>
@@ -100,23 +81,23 @@ export default function DashboardPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Recent Activity</CardTitle>
+          <CardTitle className="text-base">Recent Signups</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {recentActivity.map((item) => (
-              <div key={item.id} className="flex items-center justify-between">
+            {stats.recentUsers.map((user) => (
+              <div key={user.id} className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-xs font-medium">
-                    {item.name.split(" ").map((n) => n[0]).join("")}
+                    {user.firstName[0]}{user.lastName[0]}
                   </div>
                   <div>
-                    <p className="text-sm font-medium">{item.action}</p>
-                    <p className="text-xs text-muted-foreground">{item.name}</p>
+                    <p className="text-sm font-medium">{user.firstName} {user.lastName}</p>
+                    <p className="text-xs text-muted-foreground">{user.role}</p>
                   </div>
                 </div>
                 <Badge variant="secondary" className="text-xs font-normal">
-                  {item.time}
+                  {new Date(user.createdAt).toLocaleDateString()}
                 </Badge>
               </div>
             ))}
