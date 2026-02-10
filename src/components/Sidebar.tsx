@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { LayoutDashboard, Users, Scale, MessageSquare, DollarSign, AlertTriangle } from "lucide-react";
+import { LayoutDashboard, Users, Scale, MessageSquare, DollarSign, AlertTriangle, Shield } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
 const navItems = [
@@ -9,6 +9,7 @@ const navItems = [
   { to: "/dashboard/consultations", label: "Consultations", icon: MessageSquare },
   { to: "/dashboard/payments", label: "Payments", icon: DollarSign },
   { to: "/dashboard/reports", label: "Reports", icon: AlertTriangle },
+  { to: "/dashboard/disputes", label: "Disputes", icon: Shield },
 ];
 
 export default function Sidebar() {

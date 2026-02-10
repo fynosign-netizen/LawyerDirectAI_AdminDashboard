@@ -6,6 +6,7 @@ import LawyersPage from "@/pages/LawyersPage";
 import ConsultationsPage from "@/pages/ConsultationsPage";
 import PaymentsPage from "@/pages/PaymentsPage";
 import ReportsPage from "@/pages/ReportsPage";
+import DisputesPage from "@/pages/DisputesPage";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
@@ -28,6 +29,7 @@ export default function App() {
           <Route path="consultations" element={<ConsultationsPage />} />
           <Route path="payments" element={<PaymentsPage />} />
           <Route path="reports" element={<ReportsPage />} />
+          <Route path="disputes" element={<DisputesPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>

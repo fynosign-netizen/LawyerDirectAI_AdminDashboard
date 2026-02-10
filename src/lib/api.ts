@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const token = sessionStorage.getItem("lawyer_direct_admin_token") || "";
@@ -123,4 +123,26 @@ export interface AdminReport {
   createdAt: string;
   reporter: { firstName: string; lastName: string };
   reported: { firstName: string; lastName: string };
+}
+
+export interface AdminDispute {
+  id: string;
+  consultationId: string;
+  category: string;
+  description: string;
+  status: string;
+  resolutionType: string | null;
+  resolutionNote: string | null;
+  refundAmount: number | null;
+  lawyerDeadline: string | null;
+  mediationDeadline: string | null;
+  resolvedAt: string | null;
+  createdAt: string;
+  filedBy: { firstName: string; lastName: string };
+  filedAgainst: { firstName: string; lastName: string };
+  consultation: {
+    id: string;
+    category: string;
+    payment: { amount: number; status: string } | null;
+  };
 }

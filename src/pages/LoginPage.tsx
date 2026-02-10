@@ -1,6 +1,6 @@
 import { type FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { authenticate, setAuth } from "@/lib/auth";
+import { authenticate } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -11,24 +11,29 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
-    if (authenticate(email, password)) {
-      setAuth();
+    const result = await authenticate(email, password);
+
+    if (result.success) {
       navigate("/dashboard");
     } else {
-      setError("Invalid email or password");
+      setError(result.error || "Invalid email or password");
     }
+
+    setLoading(false);
   }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
-      
+
       <img src="/logo.png" alt="Lawyer Direct Logo" className="mx-auto mb-2 h-12 w-12" />
           <CardTitle className="text-xl">Lawyer Direct</CardTitle>
           <CardDescription>Sign in to the admin dashboard</CardDescription>
@@ -62,8 +67,8 @@ export default function LoginPage() {
               <p className="text-sm text-destructive">{error}</p>
             )}
 
-            <Button type="submit" className="w-full">
-              Sign in
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Signing in..." : "Sign in"}
             </Button>
           </form>
         </CardContent>
