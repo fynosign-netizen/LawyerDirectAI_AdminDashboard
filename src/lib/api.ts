@@ -56,7 +56,27 @@ export interface DashboardStats {
   pendingApprovals: number;
   totalRevenue: number;
   avgRating: number;
-  recentUsers: { id: string; firstName: string; lastName: string; role: string; createdAt: string }[];
+  recentUsers: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string | null;
+    role: string;
+    isVerified: boolean;
+    avatar: string | null;
+    createdAt: string;
+    _count?: { consultationsAsClient: number };
+    lawyerProfile: {
+      verificationStatus: string;
+      licenseImage: string | null;
+      idImage: string | null;
+      barNumber: string;
+      licenseState: string;
+      specializations?: string[];
+      _count?: { consultations: number };
+    } | null;
+  }[];
 }
 
 export interface AdminUser {
@@ -73,6 +93,10 @@ export interface AdminUser {
     verificationStatus: string;
     specializations: string[];
     rating: number;
+    licenseImage: string | null;
+    idImage: string | null;
+    barNumber: string;
+    licenseState: string;
   } | null;
   _count: { consultationsAsClient: number };
 }
@@ -85,8 +109,10 @@ export interface AdminLawyer {
   rating: number;
   verificationStatus: string;
   isAvailable: boolean;
+  licenseImage: string | null;
+  idImage: string | null;
   createdAt: string;
-  user: { firstName: string; lastName: string; email: string; createdAt: string };
+  user: { firstName: string; lastName: string; email: string; phone: string | null; avatar: string | null; createdAt: string };
   _count: { consultations: number; reviews: number };
 }
 
@@ -145,4 +171,70 @@ export interface AdminDispute {
     category: string;
     payment: { amount: number; status: string } | null;
   };
+}
+
+export type RecentUser = DashboardStats["recentUsers"][number];
+
+export interface AdminBroadcast {
+  id: string;
+  title: string;
+  body: string;
+  target: string;
+  sentBy: string;
+  sentCount: number;
+  createdAt: string;
+}
+
+// Analytics types
+export interface AnalyticsData {
+  registrationsByDay: { date: string; clients: number; lawyers: number; total: number }[];
+  revenueByDay: { date: string; amount: number }[];
+  consultationsByCategory: { name: string; value: number }[];
+  consultationsByStatus: { name: string; value: number }[];
+  usersByRole: { name: string; value: number }[];
+  revenueByMonth: { month: string; amount: number }[];
+}
+
+// Calendar types
+export interface CalendarDayData {
+  registrations: number;
+  consultations: number;
+  todos: { id: string; title: string; completed: boolean; priority: string }[];
+}
+export type CalendarData = Record<string, CalendarDayData>;
+
+// Todo types
+export interface AdminTodo {
+  id: string;
+  title: string;
+  description: string | null;
+  date: string | null;
+  completed: boolean;
+  priority: "low" | "medium" | "high";
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Geography types
+export type GeographyData = Record<string, { clients: number; lawyers: number }>;
+
+// Top Performing Lawyers
+export interface TopLawyer {
+  id: string;
+  name: string;
+  avatar: string | null;
+  specialization: string;
+  consultations: number;
+  revenue: number;
+  rating: number;
+}
+
+// Visitor Stats
+export interface VisitorStats {
+  totalVisitors: number;
+  totalSessions: number;
+  changePercent: number;
+  mobile: { visitors: number; sessions: number; percent: number };
+  desktop: { visitors: number; sessions: number; percent: number };
+  tablet: { visitors: number; sessions: number };
 }

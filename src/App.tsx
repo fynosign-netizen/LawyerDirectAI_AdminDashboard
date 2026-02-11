@@ -7,6 +7,10 @@ import ConsultationsPage from "@/pages/ConsultationsPage";
 import PaymentsPage from "@/pages/PaymentsPage";
 import ReportsPage from "@/pages/ReportsPage";
 import DisputesPage from "@/pages/DisputesPage";
+import NotificationsPage from "@/pages/NotificationsPage";
+import CalendarPage from "@/pages/CalendarPage";
+import TodosPage from "@/pages/TodosPage";
+import MapPage from "@/pages/MapPage";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
@@ -30,6 +34,10 @@ export default function App() {
           <Route path="payments" element={<PaymentsPage />} />
           <Route path="reports" element={<ReportsPage />} />
           <Route path="disputes" element={<DisputesPage />} />
+          <Route path="notifications" element={<NotificationsPage />} />
+          <Route path="calendar" element={<CalendarPage />} />
+          <Route path="todos" element={<TodosPage />} />
+          <Route path="map" element={<MapPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>

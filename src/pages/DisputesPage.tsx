@@ -85,17 +85,23 @@ export default function DisputesPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Disputes</h1>
-        <p className="text-sm text-muted-foreground">Manage client-lawyer disputes and resolutions</p>
-      </div>
-
-      <div className="flex items-center gap-2">
-        {["", "OPEN", "MEDIATION", "ESCALATED", "RESOLVED", "CLOSED"].map((s) => (
-          <Button key={s} variant={filter === s ? "default" : "outline"} size="sm" onClick={() => setFilter(s)}>
-            {s || "All"}
-          </Button>
-        ))}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Disputes</h1>
+          <p className="text-sm text-muted-foreground">Manage client-lawyer disputes and resolutions</p>
+        </div>
+        <select
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          className="h-9 rounded-md border bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+        >
+          <option value="">All Statuses</option>
+          <option value="OPEN">Open</option>
+          <option value="MEDIATION">Mediation</option>
+          <option value="ESCALATED">Escalated</option>
+          <option value="RESOLVED">Resolved</option>
+          <option value="CLOSED">Closed</option>
+        </select>
       </div>
 
       <Card>
@@ -105,6 +111,7 @@ export default function DisputesPage() {
               <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
             </div>
           ) : (
+            <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -278,6 +285,7 @@ export default function DisputesPage() {
                 )}
               </TableBody>
             </Table>
+            </div>
           )}
         </CardContent>
       </Card>

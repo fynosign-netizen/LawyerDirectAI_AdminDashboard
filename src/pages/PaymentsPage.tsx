@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Loader2, DollarSign } from "lucide-react";
+import { useEffect, useState, useCallback } from "react";
+import { Loader2, DollarSign, Search } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,20 +14,38 @@ export default function PaymentsPage() {
   const [pagination, setPagination] = useState<Pagination | null>(null);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+  const [dateApplied, setDateApplied] = useState(false);
 
-  const fetchData = (page = 1) => {
+  const fetchData = useCallback((page = 1) => {
     setLoading(true);
     const params = new URLSearchParams({ page: String(page), limit: "20" });
     if (filter) params.set("status", filter);
+    if (fromDate) params.set("from", fromDate);
+    if (toDate) params.set("to", toDate);
 
     api
       .get<{ data: AdminPayment[]; totalAmount: number; pagination: Pagination }>(`/admin/payments?${params}`)
       .then((res) => { setPayments(res.data); setTotalAmount(res.totalAmount); setPagination(res.pagination); })
       .catch(() => {})
       .finally(() => setLoading(false));
-  };
+  }, [filter, fromDate, toDate]);
 
   useEffect(() => { fetchData(); }, [filter]);
+
+  const applyDateFilter = () => {
+    setDateApplied(true);
+    fetchData();
+  };
+
+  const clearDateFilter = () => {
+    setFromDate("");
+    setToDate("");
+    setDateApplied(false);
+    // Will re-fetch without dates on next effect
+    setTimeout(() => fetchData(), 0);
+  };
 
   return (
     <div className="space-y-6">
@@ -45,12 +63,50 @@ export default function PaymentsPage() {
         </Card>
       </div>
 
-      <div className="flex items-center gap-2">
-        {["", "COMPLETED", "PENDING", "REFUNDED"].map((s) => (
-          <Button key={s} variant={filter === s ? "default" : "outline"} size="sm" onClick={() => setFilter(s)}>
-            {s || "All"}
-          </Button>
-        ))}
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <input
+            type="date"
+            value={fromDate}
+            onChange={(e) => setFromDate(e.target.value)}
+            className="h-9 rounded-md border bg-background px-2 text-sm"
+          />
+          <span className="text-xs text-muted-foreground">to</span>
+          <input
+            type="date"
+            value={toDate}
+            onChange={(e) => setToDate(e.target.value)}
+            className="h-9 rounded-md border bg-background px-2 text-sm"
+          />
+          <button
+            onClick={applyDateFilter}
+            disabled={loading || (!fromDate && !toDate)}
+            className="flex h-9 items-center gap-1 rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+          >
+            {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Search className="h-3.5 w-3.5" />}
+            Filter
+          </button>
+          {dateApplied && (
+            <button
+              onClick={clearDateFilter}
+              className="h-9 rounded-md border px-2 text-sm text-muted-foreground hover:bg-muted"
+            >
+              Clear
+            </button>
+          )}
+        </div>
+        <div className="ml-auto">
+          <select
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="h-9 rounded-md border bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+          >
+            <option value="">All Statuses</option>
+            <option value="COMPLETED">Completed</option>
+            <option value="PENDING">Pending</option>
+            <option value="REFUNDED">Refunded</option>
+          </select>
+        </div>
       </div>
 
       <Card>
@@ -60,6 +116,7 @@ export default function PaymentsPage() {
               <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
             </div>
           ) : (
+            <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -89,6 +146,7 @@ export default function PaymentsPage() {
                 )}
               </TableBody>
             </Table>
+            </div>
           )}
         </CardContent>
       </Card>

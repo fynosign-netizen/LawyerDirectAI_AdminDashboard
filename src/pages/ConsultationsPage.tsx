@@ -38,17 +38,23 @@ export default function ConsultationsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Consultations</h1>
-        <p className="text-sm text-muted-foreground">All platform consultations</p>
-      </div>
-
-      <div className="flex items-center gap-2">
-        {["", "PENDING", "TRIAL", "ACTIVE", "COMPLETED", "CANCELLED"].map((s) => (
-          <Button key={s} variant={filter === s ? "default" : "outline"} size="sm" onClick={() => setFilter(s)}>
-            {s || "All"}
-          </Button>
-        ))}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Consultations</h1>
+          <p className="text-sm text-muted-foreground">All platform consultations</p>
+        </div>
+        <select
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          className="h-9 rounded-md border bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+        >
+          <option value="">All Statuses</option>
+          <option value="PENDING">Pending</option>
+          <option value="TRIAL">Trial</option>
+          <option value="ACTIVE">Active</option>
+          <option value="COMPLETED">Completed</option>
+          <option value="CANCELLED">Cancelled</option>
+        </select>
       </div>
 
       <Card>
@@ -58,6 +64,7 @@ export default function ConsultationsPage() {
               <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
             </div>
           ) : (
+            <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -93,6 +100,7 @@ export default function ConsultationsPage() {
                 )}
               </TableBody>
             </Table>
+            </div>
           )}
         </CardContent>
       </Card>
