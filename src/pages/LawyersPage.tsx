@@ -59,6 +59,8 @@ export default function LawyersPage() {
   const [stateFilter, setStateFilter] = useState("");
   const [specFilter, setSpecFilter] = useState<string[]>([]);
   const [specDropdownOpen, setSpecDropdownOpen] = useState(false);
+  const [sortBy, setSortBy] = useState("");
+  const [ratingFilter, setRatingFilter] = useState("");
 
   // Modal state
   const [selectedLawyer, setSelectedLawyer] = useState<AdminLawyer | null>(null);
@@ -73,6 +75,8 @@ export default function LawyersPage() {
     if (filter) params.set("verification", filter);
     if (stateFilter) params.set("state", stateFilter);
     if (specFilter.length) params.set("specializations", specFilter.join(","));
+    if (sortBy) params.set("sort", sortBy);
+    if (ratingFilter) params.set("minRating", ratingFilter);
 
     api
       .get<{ data: AdminLawyer[]; pagination: Pagination }>(`/admin/lawyers?${params}`)
@@ -86,7 +90,7 @@ export default function LawyersPage() {
 
   useEffect(() => {
     fetchLawyers();
-  }, [filter, stateFilter, specFilter]);
+  }, [filter, stateFilter, specFilter, sortBy, ratingFilter]);
 
   const handleVerify = async (id: string, status: string) => {
     try {
@@ -182,6 +186,28 @@ export default function LawyersPage() {
             <option value="PENDING">Pending</option>
             <option value="VERIFIED">Verified</option>
             <option value="REJECTED">Rejected</option>
+          </select>
+
+          <select
+            value={ratingFilter}
+            onChange={(e) => setRatingFilter(e.target.value)}
+            className="h-9 rounded-md border bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+          >
+            <option value="">All Ratings</option>
+            <option value="4">4+ Stars</option>
+            <option value="3">3+ Stars</option>
+            <option value="2">2+ Stars</option>
+          </select>
+
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="h-9 rounded-md border bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+          >
+            <option value="">Sort: Newest</option>
+            <option value="rating_desc">Sort: Top Rated</option>
+            <option value="rating_asc">Sort: Lowest Rated</option>
+            <option value="consultations">Sort: Most Consultations</option>
           </select>
         </div>
       </div>

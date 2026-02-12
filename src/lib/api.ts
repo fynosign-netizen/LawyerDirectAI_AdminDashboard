@@ -215,6 +215,32 @@ export interface AdminTodo {
   updatedAt: string;
 }
 
+// Support Ticket types
+export interface AdminTicket {
+  id: string;
+  userId: string;
+  category: string;
+  subject: string;
+  description: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  resolvedAt: string | null;
+  user: { firstName: string; lastName: string; email: string; role: string };
+  replies: AdminTicketReply[];
+  _count: { replies: number };
+}
+
+export interface AdminTicketReply {
+  id: string;
+  ticketId: string;
+  userId: string;
+  message: string;
+  isAdmin: boolean;
+  createdAt: string;
+  user: { firstName: string; lastName: string };
+}
+
 // Geography types
 export type GeographyData = Record<string, { clients: number; lawyers: number }>;
 

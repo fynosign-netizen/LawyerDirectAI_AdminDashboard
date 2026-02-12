@@ -7,6 +7,7 @@ import ConsultationsPage from "@/pages/ConsultationsPage";
 import PaymentsPage from "@/pages/PaymentsPage";
 import ReportsPage from "@/pages/ReportsPage";
 import DisputesPage from "@/pages/DisputesPage";
+import TicketsPage from "@/pages/TicketsPage";
 import NotificationsPage from "@/pages/NotificationsPage";
 import CalendarPage from "@/pages/CalendarPage";
 import TodosPage from "@/pages/TodosPage";
@@ -34,6 +35,7 @@ export default function App() {
           <Route path="payments" element={<PaymentsPage />} />
           <Route path="reports" element={<ReportsPage />} />
           <Route path="disputes" element={<DisputesPage />} />
+          <Route path="tickets" element={<TicketsPage />} />
           <Route path="notifications" element={<NotificationsPage />} />
           <Route path="calendar" element={<CalendarPage />} />
           <Route path="todos" element={<TodosPage />} />
