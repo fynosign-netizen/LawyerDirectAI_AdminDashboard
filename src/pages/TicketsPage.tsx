@@ -7,6 +7,7 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import { api, type AdminTicket, type Pagination } from "@/lib/api";
+import { mockTickets } from "@/lib/mock-data";
 
 const STATUS_COLORS: Record<string, string> = {
   OPEN: "bg-orange-50 text-orange-700",
@@ -40,10 +41,26 @@ export default function TicketsPage() {
     if (statusFilter) params.set("status", statusFilter);
     if (categoryFilter) params.set("category", categoryFilter);
 
+    const useMock = () => {
+      let filtered = mockTickets as AdminTicket[];
+      if (statusFilter) filtered = filtered.filter((t) => t.status === statusFilter);
+      if (categoryFilter) filtered = filtered.filter((t) => t.category === categoryFilter);
+      const start = (page - 1) * 20;
+      setTickets(filtered.slice(start, start + 20));
+      setPagination({ page, limit: 20, total: filtered.length, pages: Math.ceil(filtered.length / 20) });
+    };
+
     api
       .get<{ data: AdminTicket[]; pagination: Pagination }>(`/admin/tickets?${params}`)
-      .then((res) => { setTickets(res.data); setPagination(res.pagination); })
-      .catch(() => {})
+      .then((res) => {
+        if (res.data && res.data.length > 0) {
+          setTickets(res.data);
+          setPagination(res.pagination);
+        } else {
+          useMock();
+        }
+      })
+      .catch(() => useMock())
       .finally(() => setLoading(false));
   };
 

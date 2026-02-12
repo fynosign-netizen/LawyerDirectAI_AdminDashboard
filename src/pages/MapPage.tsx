@@ -19,6 +19,31 @@ const STATE_NAMES: Record<string, string> = {
   WY: "Wyoming",
 };
 
+// Reverse lookup: full state name → 2-letter code
+const STATE_NAME_TO_ABBR: Record<string, string> = Object.fromEntries(
+  Object.entries(STATE_NAMES).map(([abbr, name]) => [name.toLowerCase(), abbr])
+);
+
+/** Normalize a state key to a 2-letter code, merging duplicates */
+function normalizeGeoData(raw: GeographyData): GeographyData {
+  const merged: GeographyData = {};
+  for (const [key, value] of Object.entries(raw)) {
+    const trimmed = key.trim();
+    let abbr: string;
+    if (/^[A-Z]{2}$/.test(trimmed)) {
+      abbr = trimmed;
+    } else {
+      abbr = STATE_NAME_TO_ABBR[trimmed.toLowerCase()] || trimmed;
+    }
+    if (!merged[abbr]) {
+      merged[abbr] = { clients: 0, lawyers: 0 };
+    }
+    merged[abbr].clients += value.clients;
+    merged[abbr].lawyers += value.lawyers;
+  }
+  return merged;
+}
+
 export default function MapPage() {
   const [geoData, setGeoData] = useState<GeographyData>({});
   const [loading, setLoading] = useState(true);
@@ -26,7 +51,7 @@ export default function MapPage() {
   useEffect(() => {
     api
       .get<{ data: GeographyData }>("/admin/geography")
-      .then((res) => setGeoData(res.data))
+      .then((res) => setGeoData(normalizeGeoData(res.data)))
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
@@ -81,7 +106,7 @@ export default function MapPage() {
       </div>
 
       {/* Map */}
-      <USAMapChart />
+      <USAMapChart data={geoData} loading={loading} />
 
       {/* Top States Table */}
       {!loading && (

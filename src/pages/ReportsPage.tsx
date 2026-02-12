@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Loader2, CheckCircle, XCircle } from "lucide-react";
+import { Loader2, CheckCircle, XCircle, ChevronDown, ChevronUp } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -7,11 +7,12 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import { api, type AdminReport, type Pagination } from "@/lib/api";
+import { mockReports } from "@/lib/mock-data";
 
 const STATUS_COLORS: Record<string, string> = {
   PENDING: "bg-yellow-50 text-yellow-700",
-  REVIEWING: "bg-blue-50 text-blue-700",
-  RESOLVED: "bg-green-50 text-green-700",
+  REVIEWED: "bg-blue-50 text-blue-700",
+  ACTIONED: "bg-green-50 text-green-700",
   DISMISSED: "bg-gray-50 text-gray-700",
 };
 
@@ -20,16 +21,31 @@ export default function ReportsPage() {
   const [pagination, setPagination] = useState<Pagination | null>(null);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("");
+  const [expandedReport, setExpandedReport] = useState<string | null>(null);
 
   const fetchData = (page = 1) => {
     setLoading(true);
     const params = new URLSearchParams({ page: String(page), limit: "20" });
     if (filter) params.set("status", filter);
 
+    const useMock = () => {
+      const filtered = filter ? mockReports.filter((r) => r.status === filter) : mockReports;
+      const start = (page - 1) * 20;
+      setReports(filtered.slice(start, start + 20));
+      setPagination({ page, limit: 20, total: filtered.length, pages: Math.ceil(filtered.length / 20) });
+    };
+
     api
       .get<{ data: AdminReport[]; pagination: Pagination }>(`/admin/reports?${params}`)
-      .then((res) => { setReports(res.data); setPagination(res.pagination); })
-      .catch(() => {})
+      .then((res) => {
+        if (res.data && res.data.length > 0) {
+          setReports(res.data);
+          setPagination(res.pagination);
+        } else {
+          useMock();
+        }
+      })
+      .catch(() => useMock())
       .finally(() => setLoading(false));
   };
 
@@ -56,8 +72,8 @@ export default function ReportsPage() {
         >
           <option value="">All Statuses</option>
           <option value="PENDING">Pending</option>
-          <option value="REVIEWING">Reviewing</option>
-          <option value="RESOLVED">Resolved</option>
+          <option value="REVIEWED">Reviewed</option>
+          <option value="ACTIONED">Actioned</option>
           <option value="DISMISSED">Dismissed</option>
         </select>
       </div>
@@ -84,33 +100,51 @@ export default function ReportsPage() {
               </TableHeader>
               <TableBody>
                 {reports.map((r) => (
-                  <TableRow key={r.id}>
-                    <TableCell className="font-medium">{r.reporter.firstName} {r.reporter.lastName}</TableCell>
-                    <TableCell>{r.reported.firstName} {r.reported.lastName}</TableCell>
-                    <TableCell><Badge variant="secondary">{r.reason}</Badge></TableCell>
-                    <TableCell className="max-w-[200px] truncate text-sm text-muted-foreground">{r.description || "—"}</TableCell>
-                    <TableCell>
-                      <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_COLORS[r.status] || ""}`}>
-                        {r.status}
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">{new Date(r.createdAt).toLocaleDateString()}</TableCell>
-                    <TableCell className="text-right">
-                      {(r.status === "PENDING" || r.status === "REVIEWING") && (
-                        <div className="flex justify-end gap-1">
-                          <Button size="sm" variant="ghost" className="h-7 text-green-600" onClick={() => handleUpdate(r.id, "RESOLVED", "Action taken")}>
-                            <CheckCircle className="mr-1 h-3.5 w-3.5" /> Resolve
-                          </Button>
-                          <Button size="sm" variant="ghost" className="h-7 text-gray-500" onClick={() => handleUpdate(r.id, "DISMISSED")}>
-                            <XCircle className="mr-1 h-3.5 w-3.5" /> Dismiss
-                          </Button>
-                        </div>
-                      )}
-                      {r.resolution && (
-                        <p className="text-xs text-muted-foreground mt-1">{r.resolution}</p>
-                      )}
-                    </TableCell>
-                  </TableRow>
+                  <>
+                    <TableRow key={r.id}>
+                      <TableCell className="font-medium">{r.reporter.firstName} {r.reporter.lastName}</TableCell>
+                      <TableCell>{r.reported.firstName} {r.reported.lastName}</TableCell>
+                      <TableCell><Badge variant="secondary">{r.reason}</Badge></TableCell>
+                      <TableCell className="max-w-[250px]">
+                        {r.description ? (
+                          <button
+                            onClick={() => setExpandedReport(expandedReport === r.id ? null : r.id)}
+                            className="flex items-start gap-1 text-left text-sm text-muted-foreground hover:text-foreground transition-colors"
+                          >
+                            <span className={expandedReport === r.id ? "" : "line-clamp-2"}>{r.description}</span>
+                            {r.description.length > 60 && (
+                              expandedReport === r.id
+                                ? <ChevronUp className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                                : <ChevronDown className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                            )}
+                          </button>
+                        ) : (
+                          <span className="text-sm text-muted-foreground">—</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_COLORS[r.status] || ""}`}>
+                          {r.status}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">{new Date(r.createdAt).toLocaleDateString()}</TableCell>
+                      <TableCell className="text-right">
+                        {(r.status === "PENDING" || r.status === "REVIEWED") && (
+                          <div className="flex justify-end gap-1">
+                            <Button size="sm" variant="ghost" className="h-7 text-green-600" onClick={() => handleUpdate(r.id, "ACTIONED", "Action taken")}>
+                              <CheckCircle className="mr-1 h-3.5 w-3.5" /> Resolve
+                            </Button>
+                            <Button size="sm" variant="ghost" className="h-7 text-gray-500" onClick={() => handleUpdate(r.id, "DISMISSED")}>
+                              <XCircle className="mr-1 h-3.5 w-3.5" /> Dismiss
+                            </Button>
+                          </div>
+                        )}
+                        {r.resolution && (
+                          <p className="text-xs text-muted-foreground mt-1">{r.resolution}</p>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  </>
                 ))}
                 {reports.length === 0 && (
                   <TableRow><TableCell colSpan={7} className="h-24 text-center text-muted-foreground">No reports found</TableCell></TableRow>

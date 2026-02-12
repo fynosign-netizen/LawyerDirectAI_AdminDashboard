@@ -33,6 +33,7 @@ import {
   type VisitorStats,
   type CalendarData,
   type AdminTodo,
+  type GeographyData,
 } from "@/lib/api";
 import { RegistrationChart } from "@/components/charts/RegistrationChart";
 import { RevenueChart } from "@/components/charts/RevenueChart";
@@ -98,6 +99,10 @@ export default function DashboardPage() {
   const [visitors, setVisitors] = useState<VisitorStats | null>(null);
   const [visitorPeriod] = useState(90);
 
+  // Geography
+  const [geoData, setGeoData] = useState<GeographyData>({});
+  const [geoLoading, setGeoLoading] = useState(true);
+
   // Calendar
   const today = new Date();
   const [calYear, setCalYear] = useState(today.getFullYear());
@@ -129,6 +134,14 @@ export default function DashboardPage() {
       .then((res) => setTopLawyers(res.data))
       .catch(() => {});
   }, [lawyerSearch]);
+
+  // Fetch geography data
+  useEffect(() => {
+    api.get<{ data: GeographyData }>("/admin/geography")
+      .then((res) => setGeoData(res.data))
+      .catch(() => {})
+      .finally(() => setGeoLoading(false));
+  }, []);
 
   // Fetch visitor stats
   useEffect(() => {
@@ -603,7 +616,7 @@ export default function DashboardPage() {
       </div>
 
       {/* ── USA Map ── */}
-      <USAMapChart />
+      <USAMapChart data={geoData} loading={geoLoading} />
 
       {/* ── Recent Signups (last 24 h) ── */}
       <Card>

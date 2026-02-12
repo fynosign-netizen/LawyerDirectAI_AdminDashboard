@@ -1,9 +1,9 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { ComposableMap, Geographies, Geography, ZoomableGroup } from "react-simple-maps";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2, ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
-import { api, type GeographyData } from "@/lib/api";
+import type { GeographyData } from "@/lib/api";
 
 const GEO_URL = "https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json";
 
@@ -37,9 +37,12 @@ const STATE_NAMES: Record<string, string> = {
 
 type ViewMode = "total" | "clients" | "lawyers";
 
-export function USAMapChart() {
-  const [geoData, setGeoData] = useState<GeographyData>({});
-  const [loading, setLoading] = useState(true);
+interface USAMapChartProps {
+  data?: GeographyData;
+  loading?: boolean;
+}
+
+export function USAMapChart({ data: geoData = {}, loading = false }: USAMapChartProps) {
   const [hoveredState, setHoveredState] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>("total");
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
@@ -49,14 +52,6 @@ export function USAMapChart() {
   const handleZoomIn = () => setZoom((z) => Math.min(z * 1.5, 8));
   const handleZoomOut = () => setZoom((z) => Math.max(z / 1.5, 1));
   const handleReset = () => { setZoom(1); setCenter([0, 0]); };
-
-  useEffect(() => {
-    api
-      .get<{ data: GeographyData }>("/admin/geography")
-      .then((res) => setGeoData(res.data))
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
 
   const maxCount = useMemo(() => {
     return Math.max(

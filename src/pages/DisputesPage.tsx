@@ -7,6 +7,7 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import { api, type AdminDispute, type Pagination } from "@/lib/api";
+import { mockDisputes } from "@/lib/mock-data";
 
 const STATUS_COLORS: Record<string, string> = {
   OPEN: "bg-yellow-50 text-yellow-700",
@@ -37,10 +38,24 @@ export default function DisputesPage() {
     const params = new URLSearchParams({ page: String(page), limit: "20" });
     if (filter) params.set("status", filter);
 
+    const useMock = () => {
+      const filtered = filter ? mockDisputes.filter((d) => d.status === filter) : mockDisputes;
+      const start = (page - 1) * 20;
+      setDisputes(filtered.slice(start, start + 20));
+      setPagination({ page, limit: 20, total: filtered.length, pages: Math.ceil(filtered.length / 20) });
+    };
+
     api
       .get<{ data: AdminDispute[]; pagination: Pagination }>(`/admin/disputes?${params}`)
-      .then((res) => { setDisputes(res.data); setPagination(res.pagination); })
-      .catch(() => {})
+      .then((res) => {
+        if (res.data && res.data.length > 0) {
+          setDisputes(res.data);
+          setPagination(res.pagination);
+        } else {
+          useMock();
+        }
+      })
+      .catch(() => useMock())
       .finally(() => setLoading(false));
   };
 

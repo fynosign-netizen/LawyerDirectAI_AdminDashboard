@@ -84,6 +84,7 @@ export interface AdminUser {
   firstName: string;
   lastName: string;
   email: string;
+  phone: string | null;
   role: string;
   createdAt: string;
   lastActiveAt: string | null;
