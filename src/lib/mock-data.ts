@@ -1,3 +1,5 @@
+import type { AdminReview } from "./api";
+
 export interface User {
   id: string;
   name: string;
@@ -561,5 +563,56 @@ export const mockTickets: AdminTicket[] = [
       },
     ],
     _count: { replies: 2 },
+  },
+];
+
+export const mockReviews: AdminReview[] = [
+  {
+    id: "rev-001",
+    rating: 5,
+    comment: "Absolutely fantastic attorney. She handled my divorce case with professionalism and empathy.",
+    status: "PENDING",
+    rejectionReason: null,
+    reviewedAt: null,
+    createdAt: "2026-02-16T10:00:00.000Z",
+    reviewer: { firstName: "Sarah", lastName: "Mitchell", email: "sarah@example.com" },
+    lawyerProfile: { id: "lp-1", user: { firstName: "James", lastName: "Wilson" } },
+    consultation: { id: "c-1", category: "Family Law" },
+  },
+  {
+    id: "rev-002",
+    rating: 1,
+    comment: "Terrible experience. Lawyer was rude and unhelpful.",
+    status: "PENDING",
+    rejectionReason: null,
+    reviewedAt: null,
+    createdAt: "2026-02-15T14:30:00.000Z",
+    reviewer: { firstName: "Kevin", lastName: "Hart", email: "kevin@example.com" },
+    lawyerProfile: { id: "lp-2", user: { firstName: "Maria", lastName: "Garcia" } },
+    consultation: { id: "c-2", category: "Criminal Defense" },
+  },
+  {
+    id: "rev-003",
+    rating: 4,
+    comment: "Good advice on my immigration case. Responded quickly.",
+    status: "APPROVED",
+    rejectionReason: null,
+    reviewedAt: "2026-02-14T09:00:00.000Z",
+    createdAt: "2026-02-13T11:00:00.000Z",
+    reviewer: { firstName: "John", lastName: "Davis", email: "john@example.com" },
+    lawyerProfile: { id: "lp-3", user: { firstName: "Robert", lastName: "Chen" } },
+    consultation: { id: "c-3", category: "Immigration" },
+  },
+  {
+    id: "rev-004",
+    rating: 2,
+    comment: "Overcharged for a simple consultation. Would not recommend.",
+    status: "REJECTED",
+    rejectionReason: "Review contains unverified claims about billing.",
+    reviewedAt: "2026-02-12T15:00:00.000Z",
+    createdAt: "2026-02-11T08:00:00.000Z",
+    reviewer: { firstName: "Lisa", lastName: "Brown", email: "lisa@example.com" },
+    lawyerProfile: { id: "lp-1", user: { firstName: "James", lastName: "Wilson" } },
+    consultation: { id: "c-4", category: "Business Law" },
   },
 ];

@@ -186,6 +186,33 @@ export interface AdminBroadcast {
   createdAt: string;
 }
 
+export interface NotificationStats {
+  totalBroadcasts: number;
+  broadcastsThisMonth: number;
+  totalNotifications: number;
+  unreadNotifications: number;
+  notificationsToday: number;
+  notificationsThisWeek: number;
+  activePushTokens: number;
+  totalUsers: number;
+  pushTokenRate: number;
+  totalUsersReached: number;
+  notificationsByType: { type: string; count: number }[];
+}
+
+export interface AdminNotification {
+  id: string;
+  userId: string;
+  type: string;
+  title: string;
+  body: string;
+  data: Record<string, unknown> | null;
+  read: boolean;
+  readAt: string | null;
+  createdAt: string;
+  user: { firstName: string; lastName: string; email: string; role: string };
+}
+
 // Analytics types
 export interface AnalyticsData {
   registrationsByDay: { date: string; clients: number; lawyers: number; total: number }[];
@@ -254,6 +281,23 @@ export interface TopLawyer {
   consultations: number;
   revenue: number;
   rating: number;
+}
+
+// Review Moderation
+export interface AdminReview {
+  id: string;
+  rating: number;
+  comment: string | null;
+  status: string;
+  rejectionReason: string | null;
+  reviewedAt: string | null;
+  createdAt: string;
+  reviewer: { firstName: string; lastName: string; email: string };
+  lawyerProfile: {
+    id: string;
+    user: { firstName: string; lastName: string };
+  };
+  consultation: { id: string; category: string };
 }
 
 // Visitor Stats
