@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import {
-  Plus, Loader2, Trash2, Pencil, Eye, X, ChevronDown, ChevronUp,
+  Plus, Loader2, Trash2, Pencil, ChevronDown, ChevronUp,
   Briefcase, MapPin, Clock, Users, DollarSign, ExternalLink,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
