@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { Loader2, CheckCircle, XCircle, Eye, AlertTriangle, User, Calendar, FileText, MessageSquare } from "lucide-react";
+import { Loader2, CheckCircle, XCircle, Eye, AlertTriangle, User, FileText, MessageSquare } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
