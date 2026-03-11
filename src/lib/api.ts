@@ -174,6 +174,52 @@ export interface AdminDispute {
   };
 }
 
+export interface AdminSupportParticipant {
+  id?: string;
+  firstName: string;
+  lastName: string;
+  email?: string;
+  role?: string;
+}
+
+export interface AdminSupportTimelineEntry {
+  id: string;
+  action: string;
+  description: string;
+  createdAt: string;
+  actor?: { firstName: string; lastName: string } | null;
+}
+
+export interface AdminSupportItem {
+  id: string;
+  itemType: "TICKET" | "DISPUTE";
+  status: string;
+  category: string;
+  title: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+  resolvedAt: string | null;
+  activityCount: number;
+  evidenceCount?: number;
+  user?: AdminSupportParticipant;
+  replies?: AdminTicketReply[];
+  filedBy?: AdminSupportParticipant;
+  filedAgainst?: AdminSupportParticipant;
+  consultation?: {
+    id: string;
+    category: string;
+    status?: string;
+    payment: { amount: number; status: string } | null;
+  };
+  timeline?: AdminSupportTimelineEntry[];
+  resolutionType?: string | null;
+  resolutionNote?: string | null;
+  refundAmount?: number | null;
+  lawyerDeadline?: string | null;
+  mediationDeadline?: string | null;
+}
+
 export type RecentUser = DashboardStats["recentUsers"][number];
 
 export interface AdminBroadcast {
