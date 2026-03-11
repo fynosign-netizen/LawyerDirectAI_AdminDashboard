@@ -213,6 +213,23 @@ export interface AdminNotification {
   user: { firstName: string; lastName: string; email: string; role: string };
 }
 
+export interface AdminDataRequest {
+  id: string;
+  userId: string;
+  userEmail: string;
+  status: "PENDING" | "APPROVED" | "REJECTED";
+  requestTimestamp: string;
+  processedAt: string | null;
+  exportedAt: string | null;
+  rejectionReason: string | null;
+  user: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+}
+
 // Analytics types
 export interface AnalyticsData {
   registrationsByDay: { date: string; clients: number; lawyers: number; total: number }[];

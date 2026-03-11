@@ -14,6 +14,7 @@ import TodosPage from "@/pages/TodosPage";
 import MapPage from "@/pages/MapPage";
 import ReviewsPage from "@/pages/ReviewsPage";
 import CareerPostingsPage from "@/pages/CareerPostingsPage";
+import DataRequestsPage from "@/pages/DataRequestsPage";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
@@ -38,6 +39,7 @@ export default function App() {
           <Route path="reports" element={<ReportsPage />} />
           <Route path="disputes" element={<DisputesPage />} />
           <Route path="reviews" element={<ReviewsPage />} />
+          <Route path="data-requests" element={<DataRequestsPage />} />
           <Route path="tickets" element={<TicketsPage />} />
           <Route path="notifications" element={<NotificationsPage />} />
           <Route path="calendar" element={<CalendarPage />} />
