@@ -1,7 +1,7 @@
 import { NavLink, useLocation } from "react-router-dom";
 import {
   LayoutDashboard, Users, Scale, MessageSquare, DollarSign,
-  AlertTriangle, Shield, Star, Bell, Calendar, CheckSquare, Map, LifeBuoy,
+  Star, Bell, Calendar, CheckSquare, Map, LifeBuoy,
   Briefcase, Database, ChevronsLeft, ChevronsRight, X,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
@@ -17,10 +17,8 @@ const navItems = [
   { to: "/dashboard/consultations", label: "Consultations", icon: MessageSquare },
   { to: "/dashboard/payments", label: "Payments", icon: DollarSign },
   { to: "/dashboard/data-requests", label: "Data Requests", icon: Database },
-  { to: "/dashboard/reports", label: "Reports", icon: AlertTriangle },
-  { to: "/dashboard/disputes", label: "Disputes", icon: Shield },
+  { to: "/dashboard/support", label: "Support Center", icon: LifeBuoy },
   { to: "/dashboard/reviews", label: "Reviews", icon: Star },
-  { to: "/dashboard/tickets", label: "Tickets", icon: LifeBuoy },
   { to: "/dashboard/careers", label: "Career Postings", icon: Briefcase },
   { to: "/dashboard/notifications", label: "Notifications", icon: Bell },
 ];

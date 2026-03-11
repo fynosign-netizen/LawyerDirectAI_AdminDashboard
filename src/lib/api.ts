@@ -192,7 +192,7 @@ export interface AdminSupportTimelineEntry {
 
 export interface AdminSupportItem {
   id: string;
-  itemType: "TICKET" | "DISPUTE";
+  itemType: "TICKET" | "DISPUTE" | "REPORT";
   status: string;
   category: string;
   title: string;
@@ -206,6 +206,8 @@ export interface AdminSupportItem {
   replies?: AdminTicketReply[];
   filedBy?: AdminSupportParticipant;
   filedAgainst?: AdminSupportParticipant;
+  reporter?: AdminSupportParticipant;
+  reported?: AdminSupportParticipant;
   consultation?: {
     id: string;
     category: string;
@@ -215,6 +217,7 @@ export interface AdminSupportItem {
   timeline?: AdminSupportTimelineEntry[];
   resolutionType?: string | null;
   resolutionNote?: string | null;
+  resolution?: string | null;
   refundAmount?: number | null;
   lawyerDeadline?: string | null;
   mediationDeadline?: string | null;

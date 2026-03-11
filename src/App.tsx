@@ -5,8 +5,6 @@ import UsersPage from "@/pages/UsersPage";
 import LawyersPage from "@/pages/LawyersPage";
 import ConsultationsPage from "@/pages/ConsultationsPage";
 import PaymentsPage from "@/pages/PaymentsPage";
-import ReportsPage from "@/pages/ReportsPage";
-import DisputesPage from "@/pages/DisputesPage";
 import TicketsPage from "@/pages/TicketsPage";
 import NotificationsPage from "@/pages/NotificationsPage";
 import CalendarPage from "@/pages/CalendarPage";
@@ -36,11 +34,12 @@ export default function App() {
           <Route path="lawyers" element={<LawyersPage />} />
           <Route path="consultations" element={<ConsultationsPage />} />
           <Route path="payments" element={<PaymentsPage />} />
-          <Route path="reports" element={<ReportsPage />} />
-          <Route path="disputes" element={<DisputesPage />} />
+          <Route path="support" element={<TicketsPage />} />
+          <Route path="reports" element={<Navigate to="/dashboard/support" replace />} />
+          <Route path="disputes" element={<Navigate to="/dashboard/support" replace />} />
           <Route path="reviews" element={<ReviewsPage />} />
           <Route path="data-requests" element={<DataRequestsPage />} />
-          <Route path="tickets" element={<TicketsPage />} />
+          <Route path="tickets" element={<Navigate to="/dashboard/support" replace />} />
           <Route path="notifications" element={<NotificationsPage />} />
           <Route path="calendar" element={<CalendarPage />} />
           <Route path="todos" element={<TodosPage />} />
